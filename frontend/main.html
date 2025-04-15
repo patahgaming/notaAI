@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Besok Ngoding HTML</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-header">
+        <i class="material-icons">chat_bubble</i>
+        <h1>Besok ngoding.html</h1>
+        <img src="https://via.placeholder.com/30" alt="User Avatar" class="user-avatar">
+    </div>
+
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            <div class="chat-body" id="chat-body">
+                <div class="message received">
+                    <p>Halo nota, tolong ingatkan saya ngoding html dan jangan lupa tanya apa besok kamu bilang besok ngoding html</p>
+                    <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                    <div class="message-actions">
+                        <button class="action-btn edit-btn" onclick="editMessage(this)"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn hide-btn" onclick="toggleMessage(this)"><i class="fas fa-eye-slash"></i></button>
+                    </div>
+                </div>
+                <div class="message sent">
+                    <p>Baik, saya akan mengingatkan bahwa kamu ingin ngoding HTML 😄</p>
+                    <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                    <div class="message-actions">
+                        <button class="action-btn regenerate-btn" onclick="regenerateMessage(this)"><i class="fas fa-sync-alt"></i></button>
+                        <button class="action-btn copy-btn" onclick="copyMessage(this)"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn share-btn" onclick="copyShareLink(this)"><i class="fas fa-share-alt"></i></button>
+                        <button class="action-btn like-btn" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i></button>
+                        <button class="action-btn dislike-btn" onclick="toggleDislike(this)"><i class="far fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input">
+        <label for="file-upload" class="upload-btn">
+            <i class="fas fa-paperclip"></i>
+            <input type="file" id="file-upload" style="display: none;" accept="image/*" onchange="handleFileUpload(this)">
+        </label>
+        <input type="text" id="chat-input-text" placeholder="Tuliskan apa yang saya harus ingat">
+        <button type="submit" onclick="sendMessage()"><i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script>
+        function editMessage(button) {
+            const messageP = button.parentElement.parentElement.querySelector('p');
+            const currentText = messageP.textContent;
+            const newText = prompt('Edit pesan:', currentText);
+            if (newText !== null && newText.trim() !== '') {
+                messageP.textContent = newText;
+            }
+        }
+
+        function toggleMessage(button) {
+            const messageP = button.parentElement.parentElement.querySelector('p');
+            const messageMedia = button.parentElement.parentElement.querySelector('.message-media');
+            const icon = button.querySelector('i');
+            if (messageP.style.display === 'none') {
+                messageP.style.display = 'block';
+                if (messageMedia) messageMedia.style.display = 'block';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                messageP.style.display = 'none';
+                if (messageMedia) messageMedia.style.display = 'none';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function regenerateMessage(button) {
+            const messageP = button.parentElement.parentElement.querySelector('p');
+            messageP.textContent = 'Pesan ini telah di-regenerate! 😄 (Simulasi)';
+        }
+
+        function copyMessage(button) {
+            const messageP = button.parentElement.parentElement.querySelector('p');
+            navigator.clipboard.writeText(messageP.textContent).then(() => {
+                alert('Pesan disalin ke clipboard!');
+            });
+        }
+
+        function copyShareLink(button) {
+            const messageP = button.parentElement.parentElement.querySelector('p');
+            const shareLink = `https://example.com/share?message=${encodeURIComponent(messageP.textContent)}`;
+            navigator.clipboard.writeText(shareLink).then(() => {
+                alert('Link berbagi disalin ke clipboard! (Simulasi)');
+            });
+        }
+
+        function toggleLike(button) {
+            const icon = button.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+        }
+
+        function toggleDislike(button) {
+            const icon = button.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+        }
+
+        function handleFileUpload(input) {
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const chatBody = document.getElementById('chat-body');
+                    const userMessage = `
+                        <div class="message received">
+                            <p>File telah diunggah:</p>
+                            <img src="${e.target.result}" alt="Uploaded File" class="message-media">
+                            <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                            <div class="message-actions">
+                                <button class="action-btn edit-btn" onclick="editMessage(this)"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn hide-btn" onclick="toggleMessage(this)"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    chatBody.insertAdjacentHTML('beforeend', userMessage);
+                    setTimeout(() => {
+                        const aiMessage = `
+                            <div class="message sent">
+                                <p>Gambar telah diterima! 😄</p>
+                                <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                                <div class="message-actions">
+                                    <button class="action-btn regenerate-btn" onclick="regenerateMessage(this)"><i class="fas fa-sync-alt"></i></button>
+                                    <button class="action-btn copy-btn" onclick="copyMessage(this)"><i class="fas fa-copy"></i></button>
+                                    <button class="action-btn share-btn" onclick="copyShareLink(this)"><i class="fas fa-share-alt"></i></button>
+                                    <button class="action-btn like-btn" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i></button>
+                                    <button class="action-btn dislike-btn" onclick="toggleDislike(this)"><i class="far fa-thumbs-down"></i></button>
+                                </div>
+                            </div>
+                        `;
+                        chatBody.insertAdjacentHTML('beforeend', aiMessage);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }, 500);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input-text');
+            const messageText = input.value.trim();
+            if (messageText === '') return;
+
+            const chatBody = document.getElementById('chat-body');
+            const userMessage = `
+                <div class="message received">
+                    <p>${messageText}</p>
+                    <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                    <div class="message-actions">
+                        <button class="action-btn edit-btn" onclick="editMessage(this)"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn hide-btn" onclick="toggleMessage(this)"><i class="fas fa-eye-slash"></i></button>
+                    </div>
+                </div>
+            `;
+            chatBody.insertAdjacentHTML('beforeend', userMessage);
+
+            setTimeout(() => {
+                const aiMessage = `
+                    <div class="message sent">
+                        <p>Baik, saya telah mencatat pesanmu! 😄</p>
+                        <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar">
+                        <div class="message-actions">
+                            <button class="action-btn regenerate-btn" onclick="regenerateMessage(this)"><i class="fas fa-sync-alt"></i></button>
+                            <button class="action-btn copy-btn" onclick="copyMessage(this)"><i class="fas fa-copy"></i></button>
+                            <button class="action-btn share-btn" onclick="copyShareLink(this)"><i class="fas fa-share-alt"></i></button>
+                            <button class="action-btn like-btn" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i></button>
+                            <button class="action-btn dislike-btn" onclick="toggleDislike(this)"><i class="far fa-thumbs-down"></i></button>
+                        </div>
+                    </div>
+                `;
+                chatBody.insertAdjacentHTML('beforeend', aiMessage);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 500);
+
+            input.value = '';
+        }
+
+
+        document.getElementById('chat-input-text').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
