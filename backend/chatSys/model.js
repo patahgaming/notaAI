@@ -2,9 +2,16 @@
 const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema({
-  user_id: String,        // atau ObjectId kalau mau lebih proper
-  message: String,
+  user_id: {
+    type: String,
+    ref: 'User',
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,},
   response: String,
+  model: String,
   timestamp: {
     type: Date,
     default: Date.now,

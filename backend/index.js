@@ -3,12 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const authMiddleware = require('./loginSys/authMiddleware');
 const pool = require('./config/mysql'); // Import MySQL connection pool
 const connectMongo = require('./config/mongodb'); // Import MongoDB connection function
 
 // Import route placeholders
 const authRoutes = require('./loginSys/routes');
 const chatRoutes = require('./chatSys/routes');
+const { login } = require('./loginSys/controller');
 
 const PORT = process.env.PORT || 3000;
 // 🧠 INFO Database & Cek User Table
@@ -38,7 +40,8 @@ app.get('/', (req, res) => {
 
 // Route mounting (aktifin nanti kalau udah ada file-nya)
 app.use('/api/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/chat', authMiddleware, chatRoutes); // Use authMiddleware for chat routes
+
 
 // Start server
 app.listen(PORT, () => {
